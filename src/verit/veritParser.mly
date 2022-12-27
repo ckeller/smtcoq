@@ -87,8 +87,35 @@
 %start proof
 %type <VeritAst.certif> proof
 
+
+%type <string> argument
+%type <string list> arguments
+%type <VeritAst.clause> clause
+%type <string list> discharge
+%type <VeritAst.term> ident
+%type <VeritAst.step> line
+%type <VeritAst.term list> list(term)
+%type <string list> nonempty_list(SYMBOL)
+%type <string list> nonempty_list(argument)
+%type <VeritAst.step list> nonempty_list(line)
+%type <(string * VeritAst.typ) list> nonempty_list(sorted_var)
+%type <VeritAst.term list> nonempty_list(term)
+%type <(string list) option> option(arguments)
+%type <VeritAst.params option> option(premises)
+%type <VeritAst.params> premises
+%type <VeritAst.rule> rulename
+%type <VeritAst.typ> sort
+%type <string * VeritAst.typ> sorted_var
+%type <VeritAst.step> subproof
+%type <VeritAst.step list> subproofline
+%type <VeritAst.term> term
+
+
 //%type <VeritAst.step> line
 %%
+
+
+
 
 proof:
   | l=line+ EOF { l }

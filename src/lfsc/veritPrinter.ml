@@ -11,9 +11,9 @@
 
 
 open Format
-open Ast
-open Builtin
-open Translator_sig  
+open Smtcoq_plugin.Ast
+open Smtcoq_plugin.Builtin
+open Smtcoq_plugin.Translator_sig
 
 
 type lit = term
@@ -29,7 +29,7 @@ type clause = term list
 (*   end) *)
 
 
-module HS = Hstring.H
+module HS = Smtcoq_plugin.Hstring.H
 
 module HT = struct
   module M = Map.Make (Term)
@@ -144,7 +144,7 @@ let get_rule = function
 
 let print_sharps () =
   HT.iter (fun t id ->
-      printf "#%d --> %a@." id Ast.print_term_type t) sharp_tbl
+      printf "#%d --> %a@." id Smtcoq_plugin.Ast.print_term_type t) sharp_tbl
 
 
 let smt2_of_lfsc t =
@@ -161,7 +161,7 @@ let smt2_of_lfsc t =
   else if t == H.times_Int then "*"
   else if t == H.div_Int then "/" (* Maybe div? *)
   else if t == H.uminus_Int then "-"
-  else Hstring.view t
+  else Smtcoq_plugin.Hstring.view t
 
 
 let new_sharp t =
@@ -251,27 +251,27 @@ and print_term fmt t =
              op == H.bvlshr ->
         let nb = new_sharp t in
         fprintf fmt "#%d:(%a %a %a)" nb
-          Hstring.print op print_term a print_term b
+          Smtcoq_plugin.Hstring.print op print_term a print_term b
 
       | Some (op, [_; a]) when op == H.bvnot || op == H.bvneg ->
         let nb = new_sharp t in
-        fprintf fmt "#%d:(%a %a)" nb Hstring.print op print_term a
+        fprintf fmt "#%d:(%a %a)" nb Smtcoq_plugin.Hstring.print op print_term a
 
       | Some (op, [_; _; _; a; b]) when op == H.concat ->
         let nb = new_sharp t in
         fprintf fmt "#%d:(%a %a %a)" nb
-          Hstring.print op print_term a print_term b
+          Smtcoq_plugin.Hstring.print op print_term a print_term b
 
       | Some (op, [_; i; j; _; a]) when op == H.extract ->
         let nb = new_sharp t in
         fprintf fmt "#%d:(%a %a %a %a)" nb
-          Hstring.print op print_term i print_term j print_term a
+          Smtcoq_plugin.Hstring.print op print_term i print_term j print_term a
 
       | Some (op, [_; i; _; a])
         when op == H.zero_extend || op == H.sign_extend ->
         let nb = new_sharp t in
         fprintf fmt "#%d:(%a %a %a)" nb
-          Hstring.print op print_term i print_term a
+          Smtcoq_plugin.Hstring.print op print_term i print_term a
 
       | Some (op, [a; {value = Int n}]) when op == H.bitof ->
         let nb = new_sharp t in
@@ -300,7 +300,7 @@ and print_term fmt t =
           (fun fmt -> List.iter (fprintf fmt " %a" print_term)) l
 
       | None ->
-        eprintf "Could not translate term %a@." Ast.print_term t;
+        eprintf "Could not translate term %a@." Smtcoq_plugin.Ast.print_term t;
         assert false
 
 
@@ -330,7 +330,7 @@ let print_clause_elim_or fmt t = fprintf fmt "(%a)" (print_clause true) t
 let print_clause fmt t = fprintf fmt "(%a)" (print_clause false) t
   
 
-let rec to_clause acc t = match name t with
+let rec to_clause (acc:clause) (t:term) : clause = match name t with
   | Some n when n == H.cln || n == H.tfalse -> acc
   | Some n -> t :: acc
   | None ->
@@ -350,7 +350,7 @@ let rec to_clause acc t = match name t with
     | _ -> t :: acc
 
 
-let to_clause = to_clause [] 
+let to_clause : term -> clause = to_clause []
 
 
 let rec print_clause fmt = function
@@ -417,7 +417,7 @@ let new_clause_id ?(reuse=true) cl =
     if not reuse then raise Not_found;
     OldCl (HCl.find clauses_ids cl)
   with Not_found ->
-    (* eprintf "new clause : [%a]@." (fun fmt -> List.iter (fprintf fmt "%a, " Ast.print_term)) cl; *)
+    (* eprintf "new clause : [%a]@." (fun fmt -> List.iter (fprintf fmt "%a, " Smtcoq_plugin.Ast.print_term)) cl; *)
     incr cl_cpt;
     let id = !cl_cpt in
     register_clause_id cl id;

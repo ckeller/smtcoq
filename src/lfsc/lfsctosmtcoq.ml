@@ -10,9 +10,9 @@
 (**************************************************************************)
 
 
-open Ast
+open Smtcoq_plugin.Ast
 open Format
-open Builtin
+open Smtcoq_plugin.Builtin
 open VeritPrinter
 
 let _ = Printexc.record_backtrace true
@@ -47,7 +47,7 @@ let _ =
 
 
 
-module C = Converter.Make (VeritPrinter)
+module C = Smtcoq_plugin.Converter.Make (VeritPrinter)
 
 
 (* Hard coded signatures *)
@@ -69,14 +69,14 @@ let process_signatures () =
     List.iter (fun f ->
         let chan = open_in f in
         let lexbuf = Lexing.from_channel chan in
-        LfscParser.ignore_commands LfscLexer.main lexbuf;
+        Smtcoq_plugin.LfscParser.ignore_commands Smtcoq_plugin.LfscLexer.main lexbuf;
         close_in chan
       ) signatures
   with
-  | Ast.TypingError (t1, t2) ->
+  | Smtcoq_plugin.Ast.TypingError (t1, t2) ->
     eprintf "@[<hov>LFSC typing error: expected %a, got %a@]@."
-      Ast.print_term t1
-      Ast.print_term t2
+      Smtcoq_plugin.Ast.print_term t1
+      Smtcoq_plugin.Ast.print_term t2
 
 
 (** Translate to veriT proof format and print pretty LFSC proof with colors *)
@@ -91,7 +91,7 @@ let pretty_to_verit () =
   let buf = Lexing.from_channel chan in
 
   try
-    let proof = LfscParser.proof LfscLexer.main buf in
+    let proof = Smtcoq_plugin.LfscParser.proof Smtcoq_plugin.LfscLexer.main buf in
 
     printf "LFSC proof:\n\n%a\n\n@." print_proof proof;
 
@@ -104,10 +104,10 @@ let pretty_to_verit () =
     | _ -> eprintf "No proof@."; exit 1
     
 
-  with Ast.TypingError (t1, t2) ->
+  with Smtcoq_plugin.Ast.TypingError (t1, t2) ->
     eprintf "@[<hov>Typing error: expected %a, got %a@]@."
-      Ast.print_term t1
-      Ast.print_term t2
+      Smtcoq_plugin.Ast.print_term t1
+      Smtcoq_plugin.Ast.print_term t2
 
 
 (** Translate to veriT proof format *)
@@ -124,7 +124,7 @@ let to_verit () =
   eprintf "Type-checking LFSC proof.@.";
   try
 
-    match LfscParser.last_command LfscLexer.main buf with
+    match Smtcoq_plugin.LfscParser.last_command Smtcoq_plugin.LfscLexer.main buf with
     | Some (Check p) ->
       (* eprintf "Flattening pointer structures...@."; *)
       (* flatten_term p; *)
@@ -133,15 +133,15 @@ let to_verit () =
     | _ -> eprintf "No proof@."; exit 1
 
   with
-  | Ast.TypingError (t1, t2) as e ->
+  | Smtcoq_plugin.Ast.TypingError (t1, t2) as e ->
     let backtrace = Printexc.get_backtrace () in
     eprintf "Fatal error: %s@." (Printexc.to_string e);
     eprintf "Backtrace:@\n%s@." backtrace;
 
     eprintf "@[<hov>Typing error: expected %a, got %a@]@."
-      Ast.print_term t1
-      Ast.print_term t2
-  | Ast.CVC4Sat ->
+      Smtcoq_plugin.Ast.print_term t1
+      Smtcoq_plugin.Ast.print_term t2
+  | Smtcoq_plugin.Ast.CVC4Sat ->
     eprintf "CVC4 returned SAT@."; exit 1
 
 

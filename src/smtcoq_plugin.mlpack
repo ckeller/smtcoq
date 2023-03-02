@@ -36,6 +36,7 @@ Hstring
 Type
 Ast
 Builtin
+Translator_sig
 Tosmtcoq
 Converter
 LfscParser

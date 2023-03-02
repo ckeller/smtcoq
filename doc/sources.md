@@ -441,10 +441,12 @@ module (for terms and clauses conversions) that is passed in the functor
 application, we obtain either a pre-processor from LFSC proofs to SMTCoq
 certificates directly or a converter from LFSC proofs to veriT certificates.
 
-> **Note:** You can obtain a standalone version of the converter by issuing
-> `make` in this directory. This produces a binary `lfsctosmtcoq.native` that
-> can be run with an LFSC proof as argument and produces a veriT certificate
-> on the standard output.
+> **Note:** You can obtain a standalone version of the converter by
+> issuing `make` in this directory, after having issued `make` in the
+> `src` directory. This produces a binary `lfsctosmtcoq.native` that can
+> be run with an LFSC proof as argument and produces a veriT certificate
+> on the standard output. Such a proof can be built using the script
+> `tests/runcvc4.sh`.
 
 Finally, the tactic `cvc4_bool` is implemented in the file
 [lfsc.ml](../src/lfsc/lfsc.ml)). It contains functions to call the SMT solver

@@ -104,6 +104,7 @@ lfsc/lfscParser.mli
 lfsc/type.ml
 lfsc/ast.ml
 lfsc/ast.mli
+lfsc/translator_sig.ml
 lfsc/translator_sig.mli
 lfsc/builtin.ml
 lfsc/tosmtcoq.ml

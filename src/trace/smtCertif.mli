@@ -15,7 +15,7 @@ type clause_id = int
 type 'hform rule =
   (* Weakening *)
   | Weaken of 'hform clause * 'hform list
-     (*  * weaken          : {a_1 ... a_n} --> {a_1 ... a_n b_1 ... b_n} *)
+     (*  * weaken          : {a_1 ... a_n} --> {a_1 ... a_n b_1 ... b_m} *)
 
   (* Simplification *)
   | ImmFlatten of 'hform clause * 'hform

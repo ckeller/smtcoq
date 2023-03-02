@@ -13,7 +13,7 @@ Require Export BinNums BinPos Pnat.
 Require Import BinNat Bool Equalities GenericMinMax
  OrdersFacts ZAxioms ZProperties.
 Require BinIntDef.
-Add Rec LoadPath "/home/arjun/Desktop/smtcoq/abduction-arjunvish-smtcoq/smtcoq/src" as SMTCoq.
+(* Add Rec LoadPath "/home/arjun/Desktop/smtcoq/abduction-arjunvish-smtcoq/smtcoq/src" as SMTCoq. *)
 Require Import SMTCoq.SMTCoq.
 
 (***********************************************************)
